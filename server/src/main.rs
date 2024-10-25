@@ -4,11 +4,10 @@ use tokio::net::TcpListener;
 use tokio_tungstenite::accept_async;
 use tokio_tungstenite::tungstenite::protocol::Message;
 use futures_util::stream::SplitSink;
-use futures_util::SinkExt;
+use futures_util::{SinkExt, StreamExt};
 use std::sync::{Arc, Mutex};
 use std::fs;
 use chrono::Utc;
-use std::net::SocketAddr;
 use warp::Filter;
 use serde::{Serialize, Deserialize};
 use serde_json::json;
@@ -37,6 +36,7 @@ async fn store_client_info(client_info: ClientInfo) -> anyhow::Result<()> {
     Ok(())
 }
 
+// Endpoint to handle client registration over HTTP
 async fn register_client(info: ClientInfo) -> Result<impl warp::Reply, warp::Rejection> {
     store_client_info(info).await.expect("Failed to store client info");
     Ok(warp::reply::json(&json!({"status": "client registered"})))
@@ -68,9 +68,7 @@ async fn main() -> anyhow::Result<()> {
         .and(warp::body::json())
         .and_then(register_client);
 
-    tokio::try_join!(
-        warp::serve(register_route).run(([0, 0, 0, 0], 9002)),
-    )?;
+    warp::serve(register_route).run(([0, 0, 0, 0], 9002)).await;
 
     let update_msg = Message::Text("update".to_string());
     for client in clients.lock().unwrap().iter_mut() {
