@@ -1,0 +1,30 @@
+name: "d"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build with Cargo
+        run: cargo build --release
+
+      - name: Upload build artifact to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/release/server
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
