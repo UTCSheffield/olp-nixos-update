@@ -1,4 +1,4 @@
-name: "Build && Release"
+name: "Build & Release"
 
 on:
   push:
@@ -28,15 +28,28 @@ jobs:
       - name: Create Release Tag
         id: tag
         run: |
-          VERSION=$(date +'%Y%m%d%H%M%S') # or set this to your versioning strategy
+          VERSION=$(date +'%Y%m%d%H%M%S') # Set your versioning strategy
           echo "TAG=$VERSION" >> $GITHUB_ENV
           git tag $VERSION
           git push origin $VERSION
+
+      - name: Create GitHub Release
+        id: release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag: ${{ env.TAG }}
+          name: Release ${{ env.TAG }}
+          body: |
+            This release includes the latest build.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload build artifact to release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG }}
-          files: target/release/server
+          files: |
+            ./server/target/release/server
+            ./client/target/release/client
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
