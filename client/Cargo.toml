@@ -1,0 +1,10 @@
+[package]
+name = "client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+futures-util = "0.3.31"
+serde = "1.0.213"
+tokio = "1.41.0"
+tokio-tungstenite = "0.24.0"
