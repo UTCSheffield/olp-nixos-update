@@ -36,7 +36,7 @@ jobs:
       - name: Upload build artifact to release
         uses: softprops/action-gh-release@v1
         with:
-          tag: ${{ env.TAG }}
+          tag_name: ${{ env.TAG }}
           files: target/release/server
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
