@@ -1,4 +1,4 @@
-name: "Build & Release"
+name: "d"
 
 on:
   push:
@@ -37,19 +37,19 @@ jobs:
         id: release
         uses: softprops/action-gh-release@v1
         with:
-          tag: ${{ env.TAG }}
-          name: Release ${{ env.TAG }}
+          tag_name: ${{ env.TAG }}  # Using tag_name here
+          name: "Build & Release"    # Updated release name
           body: |
-            This release includes the latest build.
+            This release includes the latest build of the server.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload build artifact to release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.TAG }}
+          tag_name: ${{ env.TAG }}  # Using tag_name here
           files: |
             ./server/target/release/server
-            ./client/target/release/client
+            ./client/target/release/client # Include client if needed
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
