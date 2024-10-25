@@ -19,8 +19,11 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Build with Cargo
-        run: cargo build --release
+      - name: CLIENT Build with Cargo
+        run: cd ./client && cargo build --release
+
+      - name: SERVER Build with Cargo
+        run: cd ./server && cargo build --release
 
       - name: Upload build artifact to release
         uses: softprops/action-gh-release@v1
