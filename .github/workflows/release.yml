@@ -1,4 +1,4 @@
-name: "d"
+name: "Build && Release"
 
 on:
   push:
@@ -25,9 +25,18 @@ jobs:
       - name: SERVER Build with Cargo
         run: cd ./server && cargo build --release
 
+      - name: Create Release Tag
+        id: tag
+        run: |
+          VERSION=$(date +'%Y%m%d%H%M%S') # or set this to your versioning strategy
+          echo "TAG=$VERSION" >> $GITHUB_ENV
+          git tag $VERSION
+          git push origin $VERSION
+
       - name: Upload build artifact to release
         uses: softprops/action-gh-release@v1
         with:
+          tag: ${{ env.TAG }}
           files: target/release/server
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
