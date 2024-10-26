@@ -16,7 +16,7 @@ jobs:
       - name: Delete Release
         id: delete_release
         run: |
-          RELEASE_NAME="latest"  # Change this to your release name
+          RELEASE_NAME="v1.0.0"  # Change this to your release name
 
           # Delete the release
           gh release delete "$RELEASE_NAME" --yes || echo "Release not found"
@@ -28,7 +28,7 @@ jobs:
       - name: Create Release Tag
         id: tag
         run: |
-          VERSION="latest"
+          VERSION="v1.0.0"
           echo "TAG=$VERSION" >> $GITHUB_ENV
           git tag $VERSION
           git push origin $VERSION
