@@ -11,6 +11,7 @@ use chrono::Utc;
 use warp::Filter;
 use serde::{Serialize, Deserialize};
 use serde_json::json;
+use users::{get_user_by_uid, get_current_uid};
 
 #[derive(Serialize, Deserialize)]
 struct ClientInfo {
@@ -44,6 +45,11 @@ async fn register_client(info: ClientInfo) -> Result<impl warp::Reply, warp::Rej
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    let user = get_user_by_uid(get_current_uid()).unwrap().name().to_str();
+    if !user == "root" {
+        eprintln!("Error: This command must be run as root.");
+    }
+    
     let listener = TcpListener::bind("0.0.0.0:9001").await?;
     let clients: Clients = Arc::new(Mutex::new(Vec::new()));
 
@@ -74,6 +80,8 @@ async fn main() -> anyhow::Result<()> {
     for client in clients.lock().unwrap().iter_mut() {
         client.send(update_msg.clone()).await?;
     }
+
+    println!();
 
     Ok(())
 }
