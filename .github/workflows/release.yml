@@ -1,4 +1,4 @@
-name: "Build & Release"
+name: "Release"
 
 on:
   push:
@@ -13,29 +13,22 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-
-      - name: SERVER Build with Cargo
-        run: cd ./server && cargo build --release
-        
-      - name: CLIENT Build with Cargo
-        run: cd ./client && cargo build --release
-
-      - name: List Build Artifacts
+      - name: Delete Release
+        id: delete_release
         run: |
-          echo "Listing server build artifacts:"
-          ls ./server/target/release/
-          echo "Listing client build artifacts:"
-          ls ./client/target/release/
+          RELEASE_NAME="latest"  # Change this to your release name
+
+          # Delete the release
+          gh release delete "$RELEASE_NAME" --yes || echo "Release not found"
+
+          # Delete the tag
+          git tag -d "$RELEASE_NAME" || echo "Tag not found"
+          git push origin :refs/tags/"$RELEASE_NAME" || echo "Remote tag not found"
 
       - name: Create Release Tag
         id: tag
         run: |
-          VERSION=$(date +'%Y%m%d%H%M%S') # Set your versioning strategy
+          VERSION="latest"
           echo "TAG=$VERSION" >> $GITHUB_ENV
           git tag $VERSION
           git push origin $VERSION
