@@ -19,7 +19,7 @@ async fn register_client() -> Result<(), Box<dyn Error>> {
     let my_local_ip = local_ip().unwrap();
     
     let client_info = ClientInfo {
-        ip: my_local_ip,  // Replace with your client's IP
+        ip: my_local_ip.to_string(),  // Replace with your client's IP
         connected_at: chrono::Utc::now().to_rfc3339(),
     };
 
