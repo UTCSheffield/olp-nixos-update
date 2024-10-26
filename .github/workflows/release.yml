@@ -17,7 +17,7 @@ jobs:
       - name: Delete Release
         id: delete_release
         run: |
-          RELEASE_NAME="v1.0.0"  # Change this to your release name
+          RELEASE_NAME="latest"  # Change this to your release name
 
           # Delete the release
           gh release delete "$RELEASE_NAME" --yes || echo "Release not found"
@@ -29,7 +29,7 @@ jobs:
       - name: Create Release Tag
         id: tag
         run: |
-          VERSION="v1.0.0"
+          VERSION="latest"
           echo "TAG=$VERSION" >> $GITHUB_ENV
           git tag $VERSION
           git push origin $VERSION
@@ -39,7 +39,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG }}  # Using tag_name here
-          name: "Release ${{ env.TAG }}"    # Updated release name
+          name: "Latest"    # Updated release name
           body: |
             This release includes the latest build of the server.
         env:
