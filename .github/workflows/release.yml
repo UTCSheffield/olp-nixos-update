@@ -26,14 +26,6 @@ jobs:
           git tag -d "$RELEASE_NAME" || echo "Tag not found"
           git push origin :refs/tags/"$RELEASE_NAME" || echo "Remote tag not found"
 
-      - name: Create Release Tag
-        id: tag
-        run: |
-          VERSION="latest"
-          echo "TAG=$VERSION" >> $GITHUB_ENV
-          git tag $VERSION
-          git push origin $VERSION
-
       - name: Create New Release
         run: |
           NEW_VERSION="latest"  # Update to the new version if needed
