@@ -25,6 +25,8 @@ jobs:
           # Delete the tag
           git tag -d "$RELEASE_NAME" || echo "Tag not found"
           git push origin :refs/tags/"$RELEASE_NAME" || echo "Remote tag not found"
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Create New Release
         run: |
@@ -36,3 +38,5 @@ jobs:
 
           # Create the release
           gh release create "$NEW_VERSION" --title "$NEW_VERSION" --notes "Release notes here."
+        env:
+          GH_TOKEN: ${{ github.token }}
