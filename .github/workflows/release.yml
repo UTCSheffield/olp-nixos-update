@@ -44,13 +44,3 @@ jobs:
             This release includes the latest build of the server.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload build artifact to release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.TAG }}  # Using tag_name here
-          files: |
-            ./server/target/release/utc_update_server
-            ./client/target/release/utc_update_client
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
