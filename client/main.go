@@ -5,10 +5,40 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"os/exec"
 	"time"
 
+	"github.com/BurntSushi/toml"
 	"github.com/gorilla/websocket"
 )
+
+type Config struct {
+	Config string `toml:"config"`
+}
+
+func updateCommands() {
+	git_pull := exec.Command("git", []string{"pull"}...)
+	git_pull.Dir = "/etc/nixos"
+	git_pull.Stdout = os.Stdout
+	git_pull.Stderr = os.Stderr
+	git_pull.Run()
+
+	config, _ := readConfig()
+	println(config)
+
+	nixos_rebuild := exec.Command("nixos-rebuild", []string{"switch", "--flake", fmt.Sprint("/etc/nixos#", config)}...)
+	nixos_rebuild.Stdout = os.Stdout
+	nixos_rebuild.Stderr = os.Stderr
+	nixos_rebuild.Run()
+}
+
+func readConfig() (string, error) {
+	var config Config
+	if _, err := toml.DecodeFile("/root/setup.toml", &config); err != nil {
+		return "", fmt.Errorf("failed to read config: %v", err)
+	}
+	return config.Config, nil
+}
 
 func connectToServer(urlStr string) (*websocket.Conn, error) {
 	u, err := url.Parse(urlStr)
@@ -28,7 +58,7 @@ func main() {
 		log.Fatal("Error: This program must be run as root.")
 	}
 
-	serverURL := "ws://127.0.0.1:9001/local"
+	serverURL := "ws://127.0.0.1:9001/"
 
 	for {
 		conn, err := connectToServer(serverURL)
@@ -49,6 +79,9 @@ func main() {
 					return // Exit the goroutine to reconnect
 				}
 				log.Printf("Received message: %s\n", message)
+				if string(message) == "update" {
+					updateCommands()
+				}
 			}
 		}()
 
