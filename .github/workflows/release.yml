@@ -1,4 +1,4 @@
-name: "d"
+name: "Build & Release"
 
 on:
   push:
@@ -19,11 +19,11 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: CLIENT Build with Cargo
-        run: cd ./client && cargo build --release
-
       - name: SERVER Build with Cargo
         run: cd ./server && cargo build --release
+        
+      - name: CLIENT Build with Cargo
+        run: cd ./client && cargo build --release
 
       - name: List Build Artifacts
         run: |
@@ -45,7 +45,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG }}  # Using tag_name here
-          name: "Release"    # Updated release name
+          name: "Release ${{ env.TAG }}"    # Updated release name
           body: |
             This release includes the latest build of the server.
         env:
