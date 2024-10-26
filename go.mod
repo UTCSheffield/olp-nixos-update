@@ -1,4 +1,4 @@
-module utc_update_client
+module utc_update
 
 go 1.22.6
 
