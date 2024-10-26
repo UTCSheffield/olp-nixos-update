@@ -1,9 +1,13 @@
-name: PR Rust Build
+name: Rust Build
 
 on:
   pull_request:
     branches:
-      - main
+      - '**'
+  push:
+    branches:
+      - '**'
+      - '!main'
 
 jobs:
   build:
