@@ -7,6 +7,7 @@ use std::error::Error;
 use std::time::Duration;
 use tokio::time::sleep;
 use futures_util::{SinkExt, StreamExt};
+use local_ip_address::local_ip;
 
 #[derive(Serialize, Deserialize)]
 struct ClientInfo {
@@ -15,14 +16,16 @@ struct ClientInfo {
 }
 
 async fn register_client() -> Result<(), Box<dyn Error>> {
+    let my_local_ip = local_ip().unwrap();
+    
     let client_info = ClientInfo {
-        ip: "192.168.0.5".to_string(),  // Replace with your client's IP
+        ip: my_local_ip,  // Replace with your client's IP
         connected_at: chrono::Utc::now().to_rfc3339(),
     };
 
     let client_json = serde_json::to_string(&client_info)?;
     let client_response = reqwest::Client::new()
-        .post("http://192.168.0.5:9002/register")  // Server registration endpoint
+        .post("http://192.168.0.38:9002/register")  // Server registration endpoint
         .body(client_json)
         .send()
         .await?;
@@ -33,7 +36,7 @@ async fn register_client() -> Result<(), Box<dyn Error>> {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let (ws_stream, _) = connect_async("ws://192.168.0.5:9001").await?;
+    let (ws_stream, _) = connect_async("ws://192.168.0.38:9001").await?;
     println!("Connected to the WebSocket server");
 
     // Register the client with the server
